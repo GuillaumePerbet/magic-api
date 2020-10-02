@@ -1,5 +1,5 @@
 <template>
-  <Header @card-name-search="fetchCard"/>
+  <Header @card-name-search="fetchCardImageUrls"/>
   <main>
     <Card :cardImageUrls="cardImageUrls"/>
   </main>
@@ -26,10 +26,10 @@ export default {
   },
 
   methods:{
-    fetchCard(cardName){
+    fetchCardImageUrls(cardName){
       axios.get( 'https://api.magicthegathering.io/v1/cards?name='+cardName )
       .then( response => {
-        this.cardImageUrls = response.data.cards.map( card => card.imageUrl )
+        this.cardImageUrls = response.data.cards.map( card => card.imageUrl ).filter( url => url !== undefined )
       })
     }
   }
