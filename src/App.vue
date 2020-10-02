@@ -1,11 +1,12 @@
 <template>
   <Header @card-name-search="fetchCard"/>
   <main>
-    <Card v-bind="card"/>
+    <Card :cardImageUrls="cardImageUrls"/>
   </main>
 </template>
 
 <script>
+import axios from 'axios'
 import Header from './components/Header.vue'
 import Card from './components/Card.vue'
 
@@ -20,23 +21,21 @@ export default {
 
   data(){
     return {
-      card: {
-        name: '',
-        text: ''
-      }
+      cardImageUrls: []
     }
   },
 
   methods:{
     fetchCard(cardName){
-      this.card.name=cardName
+      axios.get( 'https://api.magicthegathering.io/v1/cards?name='+cardName )
+      .then( response => {
+        this.cardImageUrls = response.data.cards.map( card => card.imageUrl )
+      })
     }
   }
 }
 </script>
 
 <style lang="scss">
-#app {
 
-}
 </style>
