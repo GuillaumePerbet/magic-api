@@ -1,13 +1,19 @@
 <template>
-  <Header @card-name-search="fetchCardImageUrls"/>
-  <main>
-    <Card :cardImageUrls="cardImageUrls"/>
-  </main>
+
+<!-- logo -->
+<p id="logo"><img src="./assets/logo.png" alt="Magic the Gathering logo" width="640" height="401"></p>
+
+<!-- search form listening for search submission -->
+<SearchForm @card-name-search="fetchCardImageUrls"/>
+
+<!-- cards showing search maching cards -->
+<Card :cardImageUrls="cardImageUrls"/>
+
 </template>
 
 <script>
 import axios from 'axios'
-import Header from './components/Header.vue'
+import SearchForm from './components/SearchForm.vue'
 import Card from './components/Card.vue'
 
 export default {
@@ -16,7 +22,7 @@ export default {
 
   components: {
     Card,
-    Header
+    SearchForm
   },
 
   data(){
@@ -37,5 +43,14 @@ export default {
 </script>
 
 <style lang="scss">
+
+#logo{
+  width: 200px;
+
+  img{
+      width: 100%;
+      height: auto;
+  }
+}
 
 </style>
