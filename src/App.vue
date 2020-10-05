@@ -21,7 +21,7 @@
 <section>
 
   <!-- search result card count -->
-    <div v-if="search">
+    <div v-show="!loading">
 
       <p v-if="cardCount != 0">{{ cardCount }} cartes trouvées</p>
     
@@ -54,7 +54,8 @@ export default {
     return {
       cardImageUrls: [],
       loading: false,
-      search: false
+      currentPageInAPISearch: 0,
+      totalNumberOfCardsInAPI: 0
     }
   },
 
@@ -65,14 +66,27 @@ export default {
   },
 
   methods:{
-    fetchCardImageUrls(cardName){
+    initSearch(){
       this.loading = true
-      axios.get( 'https://api.magicthegathering.io/v1/cards?name='+cardName )
-      .then( response => {
-        this.loading = false
-        this.search = true
-        this.cardImageUrls = response.data.cards.map( card => card.imageUrl ).filter( url => url !== undefined )
-      })
+      this.cardImageUrls = []
+    },
+
+    resetSearch(){
+      this.loading = false
+      this.currentPageInAPISearch = 0
+    },
+
+    fetchCardImageUrls(cardName){
+      this.initSearch()
+      do{
+        this.currentPageInAPISearch ++;
+        axios.get( 'https://api.magicthegathering.io/v1/cards?name='+cardName+'&page='+this.currentPageInAPISearch )
+        .then( response => {
+          this.totalNumberOfCardsInAPI = response.headers['total-count']
+          this.cardImageUrls = this.cardImageUrls.concat(response.data.cards.map( card => card.imageUrl ).filter( url => url !== undefined ))
+        })
+      } while ( this.currentPageInAPISearch*100 < this.totalNumberOfCardsInAPI)
+      this.resetSearch()
     }
   }
 }
@@ -108,7 +122,7 @@ export default {
 }
 
 .fade-enter-active, .fade-leave-active{
-  transition: opacity 2s;
+  transition: opacity 0.25s;
 }
 
 #loading-circle{
