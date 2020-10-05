@@ -8,18 +8,26 @@
   <!-- search form listening for search submission -->
   <SearchForm @card-name-search="fetchCardImageUrls"/>
   
-  <p v-show="loading"><img id="loading-circle" src="./assets/mana-circle.png" alt="cinq disques aux couleurs de magic disposés en cercle" width="220" height="220"></p>
+  <!-- loading animation -->
+  <transition name="fade">
+    <p v-show="loading">
+      <img id="loading-circle" src="./assets/mana-circle.png" alt="cinq disques aux couleurs de magic disposés en cercle" width="220" height="220">
+    </p>
+  </transition>
 
 </section>
 
 
 <section>
 
-  <div v-if="search">
-    <p v-if="cardCount != 0">Nombre de cartes trouvées: {{ cardCount }}</p>
-  
-    <p v-else>Aucune carte trouvée</p>
-  </div>
+  <!-- search result card count -->
+    <div v-if="search">
+
+      <p v-if="cardCount != 0">{{ cardCount }} cartes trouvées</p>
+    
+      <p v-else>Aucune carte trouvée</p>
+
+    </div>
 
   <!-- cards showing search maching cards -->
   <Card :cardImageUrls="cardImageUrls"/>
@@ -71,6 +79,7 @@ export default {
 </script>
 
 <style lang="scss">
+
 .d-flex{
   display: flex;
   align-items: center;
@@ -94,11 +103,19 @@ export default {
   }
 }
 
+.fade-enter-from, .fade-leave-to{
+  opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active{
+  transition: opacity 2s;
+}
+
 #loading-circle{
   width: 60px;
   height: auto;
   margin-left: 10px;
-  animation: rotation 2.5s infinite linear;
+  animation: rotation 2s infinite linear;
 }
 
 </style>
