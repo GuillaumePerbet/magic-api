@@ -15,11 +15,15 @@
 
 <section>
 
-  <p>Nombre de cartes trouvées: {{ cardCount }}</p>
+  <div v-if="search">
+    <p v-if="cardCount != 0">Nombre de cartes trouvées: {{ cardCount }}</p>
+  
+    <p v-else>Aucune carte trouvée</p>
+  </div>
 
   <!-- cards showing search maching cards -->
   <Card :cardImageUrls="cardImageUrls"/>
-  
+
 </section>
 
 </template>
@@ -41,7 +45,8 @@ export default {
   data(){
     return {
       cardImageUrls: [],
-      loading: false
+      loading: false,
+      search: false
     }
   },
 
@@ -56,7 +61,8 @@ export default {
       this.loading = true
       axios.get( 'https://api.magicthegathering.io/v1/cards?name='+cardName )
       .then( response => {
-        this.loading = false;
+        this.loading = false
+        this.search = true
         this.cardImageUrls = response.data.cards.map( card => card.imageUrl ).filter( url => url !== undefined )
       })
     }
