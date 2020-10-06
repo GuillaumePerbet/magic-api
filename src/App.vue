@@ -3,17 +3,22 @@
 <!-- logo -->
 <p id="logo"><img src="./assets/logo.png" alt="Magic the Gathering logo" width="640" height="401"></p>
 
-<!-- search form listening for search submission -->
+<!-- listen for card search and get images URL -->
 <SearchForm @search-complete="getCardImageUrls"/>
 
 <section>
 
-  <!-- search result card count -->
-  <p v-if="cardCount != 0">{{ cardCount }} cartes trouvées</p>
-  <p v-else>Aucune carte trouvée</p>
+  <!-- card search count -->
+  <header>
+    <p v-if="cardCount != 0">{{ cardCount }} cartes trouvées</p>
+    <p v-else>Aucune carte trouvée</p>
+  </header>
 
-  <!-- cards showing search maching cards -->
-  <Card :cardImageUrls="cardImageUrls"/>
+  <!-- cards showing -->
+  <ul>
+    <Card v-for="( cardImageUrl , index ) in cardImageUrls" :key="index" :cardImageUrl="cardImageUrl"/>
+  </ul>
+  
 
 </section>
 
@@ -34,19 +39,23 @@ export default {
 
   data(){
     return {
-      cardImageUrls: []
+      cardImageUrls: ['./assets/card-back.jpg']
     }
   },
 
   computed:{
     cardCount(){
-      return this.cardImageUrls.length
+      return this.cardImageUrls.filter( url => url !== './assets/card-back.jpg' ).length
     }
   },
 
   methods:{
     getCardImageUrls(payload){
-      this.cardImageUrls = payload
+      if (payload == []){
+        this.cardImageUrls = ['./assets/card-back.jpg']
+      } else {
+        this.cardImageUrls = payload
+      }
     }
   }
 }
@@ -61,6 +70,12 @@ export default {
       width: 100%;
       height: auto;
   }
+}
+
+ul{
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
 }
 
 </style>

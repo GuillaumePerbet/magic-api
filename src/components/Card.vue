@@ -1,12 +1,6 @@
 <template>
 
-  <div v-if="cardImageUrls.length" class="container">
-    <p class="card" v-for="( cardImageUrl , index ) in cardImageUrls" :key="index" :style="backgroundImages[index]"></p>
-  </div>
-
-  <div v-else>
-    <p class="card card-back"></p>
-  </div>
+  <li :style="backgroundImage"></li>
   
 </template>
 
@@ -16,16 +10,16 @@ export default {
   name: 'Card',
 
   props:{
-    cardImageUrls: {
-      type: Array,
+    cardImageUrl: {
+      type: String,
       required: true
     }
   },
 
   computed:{
-    backgroundImages(){
+    backgroundImage(){
       // map url to { backgroundImage: url('url') } objects for style binding
-      return this.cardImageUrls.map( url => { return {backgroundImage: "url('" + url + "')"} })
+      return { backgroundImage: "url(" + this.cardImageUrl + ")" }
     }
   }
 
@@ -34,21 +28,11 @@ export default {
 
 <style lang="scss" scoped>
 
-.container{
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.card{
+li{
   width: 254px;
   height: 352px;
   margin: 10px;
   background-size: cover;
-  background-image: url('../assets/card-back.jpg');
-
-  &-back{
-    background-image: url('../assets/card-back.jpg');
-  }
 }
 
 </style>
