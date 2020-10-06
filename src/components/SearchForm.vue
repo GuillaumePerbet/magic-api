@@ -2,18 +2,18 @@
 
 <section class="d-flex">
 
-    <!-- search card form -->
-    <form @submit.prevent="fetchCardImageUrls">
-        <input id="cardName" name="cardName" type="text" v-model="cardName"><br/>
-        <input type="submit" value="Rechercher une carte">
-    </form>
-    
-    <!-- loading animation -->
-    <transition name="fade">
-        <p v-show="loading">
-            <img id="loading-circle" src="../assets/mana-circle.png" alt="cinq disques aux couleurs de magic disposés en cercle" width="220" height="220">
-        </p>
-    </transition>
+  <!-- search card form -->
+  <form @submit.prevent="fetchCardImageUrls">
+    <input id="cardName" name="cardName" type="text" v-model="cardName"><br/>
+    <input type="submit" value="Rechercher une carte">
+  </form>
+  
+  <!-- loading animation -->
+  <transition name="fade">
+      <p v-show="loading">
+        <img id="loading-circle" src="../assets/mana-circle.png" alt="cinq disques aux couleurs de magic disposés en cercle" width="220" height="220">
+      </p>
+  </transition>
 
 </section>
 
@@ -29,32 +29,46 @@ export default {
       return {
         cardName: '',
         loading: false,
-        currentPageInAPISearch: 0,
-        totalNumberOfCardsInAPI: 0,
+        currentPage: 0,
+        totalPages: 0,
         cardImageUrls: []
       }
+  },
+
+  computed:{
+    filteredCardImageUrls(){
+      // remove undefined URLs from cardImageUrls array
+      return this.cardImageUrls.filter( url => url !== undefined )
+    }
   },
 
   methods:{
 
     resetSearch(){
+      // reset all search parameters
       this.loading = false
-      this.currentPageInAPISearch = 0
+      this.currentPage = 0
       this.cardImageUrls = []
     },
 
     async fetchCardImageUrls(){
+      // start loading animation
         this.loading = true
         do{
-            this.currentPageInAPISearch ++
-            await axios.get( 'https://api.magicthegathering.io/v1/cards?name='+this.cardName+'&page='+this.currentPageInAPISearch )
-            .then( response => {
-                this.totalNumberOfCardsInAPI = response.headers['total-count']
-                this.cardImageUrls = this.cardImageUrls.concat(response.data.cards.map( card => card.imageUrl ).filter( url => url !== undefined ))
-            })
+          // loop on request pages because API return pages of 100 items max
+          this.currentPage ++
+          // fetch current page of cardName
+          await axios.get( 'https://api.magicthegathering.io/v1/cards?name='+this.cardName+'&page='+this.currentPage )
+          .then( response => {
+              // compute total number of pages
+              this.totalPages = Math.trunc(response.headers['total-count']/100) + 1
+              // add fetched URLs to cardImageUrls array
+              this.cardImageUrls = this.cardImageUrls.concat(response.data.cards.map( card => card.imageUrl ))
+          })
         }
-        while ( this.currentPageInAPISearch*100 < this.totalNumberOfCardsInAPI )
-        this.$emit( 'search-complete' , this.cardImageUrls )
+        while ( this.currentPage < this.totalPages )
+        // emit filtered array removing empty URLs
+        this.$emit( 'search-complete' , this.filteredCardImageUrls )
         this.resetSearch()
     }
   }
