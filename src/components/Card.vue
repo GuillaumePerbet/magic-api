@@ -19,7 +19,7 @@ export default {
   computed:{
     backgroundImage(){
       // map url to { backgroundImage: url('url') } objects for style binding
-      return { backgroundImage: "url(" + this.cardImageUrl + ")" }
+      return { backgroundImage: "url("+ this.cardImageUrl +")" }
     }
   }
 
