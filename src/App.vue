@@ -10,8 +10,9 @@
 
   <!-- card search count -->
   <header>
-    <p v-if="cardCount != 0">{{ cardCount }} cartes trouvées</p>
-    <p v-else>Aucune carte trouvée</p>
+    <p v-if="cardCount == 0">Aucune carte trouvée</p>
+    <p v-else-if="cardCount == 1">1 carte trouvée</p>
+    <p v-else>{{ cardCount }} cartes trouvées</p>
   </header>
 
   <!-- cards showing -->
@@ -39,24 +40,32 @@ export default {
 
   data(){
     return {
-      cardImageUrls: ['./assets/card-back.jpg']
+      cardImageUrls: []
     }
   },
 
   computed:{
+    cardBack(){
+      return require('./assets/card-back.jpg')
+    },
+
     cardCount(){
-      return this.cardImageUrls.filter( url => url !== './assets/card-back.jpg' ).length
+      return this.cardImageUrls.filter( url => url !== this.cardBack ).length
     }
   },
 
   methods:{
     getCardImageUrls(payload){
-      if (payload == []){
-        this.cardImageUrls = ['./assets/card-back.jpg']
-      } else {
+      if (payload.length){
         this.cardImageUrls = payload
+      } else {
+        this.cardImageUrls = [this.cardBack]
       }
     }
+  },
+
+  mounted(){
+    this.cardImageUrls.push(this.cardBack)
   }
 }
 </script>
